@@ -12,7 +12,7 @@
                         type="email" v-model="email" placeholder="Email" required
                     />
                 </div>
-                <div class="mb-6">
+                <div class="flex flex-col mb-6">
                     <label class="block text-start text-white text-sm font-bold mb-2" for="password">
                         Password
                     </label>
@@ -20,13 +20,20 @@
                         class="shadow appearance-none rounded w-full py-2 px-3 text-white mb-3 leading-tight focus:outline-none focus:shadow-outline"
                         type="password" v-model="password" placeholder="Password" required
                     />
+                    <router-link
+                        class="flex justify-start items-center font-bold text-sm text-surface-500 hover:text-surface-600 pl-2.5"
+                        to="/forgetPassword"
+                    >
+                        Forget password?
+                    </router-link>
                 </div>
                 <div class="flex justify-between">
                     <router-link
                         class="flex justify-center items-center font-bold text-sm text-primary-600 hover:text-primary-300"
-                        to="/forgetPassword"
+                        to="/register"
                     >
-                        Forget password?
+                        No Account?<br>
+                        Create One.
                     </router-link>
                     <button
                         class="bg-primary-500 hover:bg-primary-600 text-black font-bold py-2 px-4 rounded"
