@@ -32,3 +32,24 @@ body {
   margin: 0 auto;
   text-align: center;
 }
+
+.custom-color {
+  color: #18c7b5; /*primary-100*/
+  color: #4bcebd; /*primary-200*/
+  color: #69d4c5; /*primary-300*/
+  color: #83dbcd; /*primary-400*/
+  color: #9ae1d5; /*primary-500*/
+  color: #afe7dd; /*primary-600*/
+  color: #121212; /*surface-100*/
+  color: #282828; /*surface-200*/
+  color: #3f3f3f; /*surface-300*/
+  color: #575757; /*surface-400*/
+  color: #717171; /*surface-500*/
+  color: #8b8b8b; /*surface-600*/
+  color: #192220; /*mixed-100*/
+  color: #2e3735; /*mixed-200*/
+  color: #454d4b; /*mixed-300*/
+  color: #5d6462; /*mixed-400*/
+  color: #767c7a; /*mixed-500*/
+  color: #8f9493; /*mixed-600*/
+}
