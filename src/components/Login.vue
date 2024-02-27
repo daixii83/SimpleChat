@@ -57,8 +57,10 @@ const login = async () => {
     try {
         await signInWithEmailAndPassword(auth, email.value, password.value);
         console.log('user login succeed');
+        showNotification('登入成功');
     } catch (error) {
         console.log('user login failed', error.message);
+        showNotification('登入失敗');
     }
 }
 </script>

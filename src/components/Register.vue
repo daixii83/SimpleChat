@@ -67,6 +67,7 @@
 import { ref } from 'vue';
 import { auth } from '../firebase.js';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { useRouter } from 'vue-router';
 
 const email = ref('');
 const password = ref('');
@@ -107,8 +108,11 @@ const register = async () => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
         console.log('register succeed', userCredential.user);
+        showNotification('註冊成功，將移至登入頁面');
+        router.push('/login');
     } catch (error) {
         console.log('register failed', error);
+        showNotification(`註冊失敗:${error}`);
     }
 }
 </script>
