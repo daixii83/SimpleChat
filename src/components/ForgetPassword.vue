@@ -39,10 +39,10 @@
     const sendResetEmail = async () => {
         try {
             await sendPasswordResetEmail(auth, email.value);
-            alert('Password reset email sent');
+            showNotification(`已寄出重設密碼通知信到${email.value}`);
         } catch (error) {
             console.error('Reset password error:', error.message);
-            alert('Error sending password reset email: ' + error.message);
+            showNotification(`發生錯誤${error.message}`);
         }
     }
 </script>

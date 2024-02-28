@@ -66,7 +66,7 @@
 <script setup>
 import { ref } from 'vue';
 import { auth } from '../firebase.js';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 
 const email = ref('');
@@ -76,21 +76,24 @@ const passwordError = ref(false);
 const emailErrorText = ref('');
 const passwordErrorText = ref('');
 const registerErrorText = ref('');
+const router = useRouter();
+const user = ref(null);
 
+// 驗證email
 const validateEmail = () => {
     const emailRule = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if(!email.value) {
         emailError.value = true;
-        emailErrorText = 'email is required';
+        emailErrorText.value = 'email is required';
     } else if (!emailRule.test(email.value)) {
         emailError.value = true;
-        emailErrorText = 'please enter a valid email';
+        emailErrorText.value = 'please enter a valid email';
     } else {
         emailError.value = false;
-        emailErrorText = '';
+        emailErrorText.value = '';
     }
 }
-
+// 驗證密碼
 const validatePassword = () => {
     if(!password.value) {
         passwordError.value = true;
@@ -100,19 +103,21 @@ const validatePassword = () => {
         passwordErrorText.value = 'Password must be 6-20 characters';
     } else {
         passwordError.value = false;
-        passwordErrorText = '';
+        passwordErrorText.value = '';
     }
 }
 
+// 註冊+寄送驗證email
 const register = async () => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
+        user.value = userCredential.user;
+        await sendEmailVerification(user);
         console.log('register succeed', userCredential.user);
-        showNotification('註冊成功，將移至登入頁面');
-        router.push('/login');
+        router.push({ name: 'resendVerifyEmail', query: { email: user.value.email } });
     } catch (error) {
-        console.log('register failed', error);
-        showNotification(`註冊失敗:${error}`);
+        console.log('register failed', error.message);
+        showNotification(`註冊失敗:${error.message}`);
     }
 }
 </script>

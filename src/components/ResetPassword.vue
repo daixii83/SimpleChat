@@ -44,11 +44,11 @@ import { useRoute, useRouter } from 'vue-router';
     const resetPassword = async () => {
         try {
             await confirmPasswordReset(auth, oobCode, newPassword.value);
-            alert('Password has been reset successfully!');
+            showNotification('設定新密碼成功!');
             router.push('/login');
         } catch (error) {
             console.log('Password reset error:', error.message);
-            alert('Error resetting password: ' + error.message);
+            showNotification(`設定新密碼失敗:${error.message}`);
         }
     }
 </script>
