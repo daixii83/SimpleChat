@@ -3,12 +3,14 @@
         <div class="w-full max-w-xs">
             <h2 class="text-xl font-bold text-center text-white">Register</h2>
             <form @submit.prevent="register" class="mt-8 bg-surface-200 rounded px-8 pt-6 pb-8 mb-4">
+                <!-- email -->
                 <div class="mb-4">
-                    <label class="block text-white text-sm font-bold mb-2" for="email">
+                    <label class="block text-white text-start text-sm font-bold mb-2" for="email">
                         Email
                     </label>
                     <input
                         class="shadow appearance-none rounded w-full py-2 px-3 text-white leading-tight"
+                        :class="{ 'border-red-500': !email && checkEmpty }"
                         type="email"
                         v-model="email"
                         @input="validateEmail"
@@ -17,46 +19,102 @@
                     />
                     <p
                         v-if="emailError"
-                        class="text-red-500 text-xs italic"
+                        class="text-red-500 text-xs italic py-1"
                     >
                         {{ emailErrorText }}
                     </p>
                 </div>
-                <div class="mb-6">
-                    <label class="block text-white text-sm font-bold mb-2" for="password">
+                <!-- password -->
+                <div class="mb-4">
+                    <label class="block text-white text-start text-sm font-bold mb-2" for="password">
                         Password
                     </label>
-                    <input
-                        class="shadow appearance-none rounded w-full py-2 px-3 text-white mb-3 leading-tight"
-                        type="password"
-                        v-model="password"
-                        @input="validatePassword"
-                        minLength="6"
-                        maxLength="20"
-                        placeholder="Password"
-                        required
-                    />
+                    <div class="relative">
+                        <input
+                            class="appearance-none rounded w-full py-2 px-3 text-white text-sm leading-tight"
+                            :class="{ 'border-red-500': !password && checkEmpty }"
+                            :type="passwordType"
+                            v-model="password"
+                            @input="validatePassword"
+                            minLength="6"
+                            maxLength="20"
+                            placeholder="Password"
+                            required
+                        />
+                        <div
+                            class="absolute right-2.5 bottom-1.5 cursor-pointer"
+                            @click.stop="showPassword = !showPassword"
+                        >
+                            <font-awesome-icon
+                                v-if="!showPassword"
+                                :icon="['fas', 'eye']"
+                            />
+                            <font-awesome-icon
+                                v-if="showPassword"
+                                :icon="['fas', 'eye-slash']"
+                            />
+                        </div>
+                    </div>
                     <p
                         v-if="passwordError"
-                        class="text-red-500 text-xs italic"
+                        class="text-red-500 text-xs italic py-1"
                     >
                         {{ passwordErrorText }}
                     </p>
                 </div>
-                <div class="flex justify-between">
-                    <button
-                        class="bg-primary-500 hover:bg-primary-600 text-black font-bold py-2 px-4 rounded"
-                        type="submit"
-                        :disabled="emailErrorText || passwordErrorText || registerErrorText"
+                <!-- confirm password -->
+                <div class="mb-8">
+                    <label class="block text-white text-start text-sm font-bold mb-2" for="confirmPassword">
+                        Confirm Password
+                    </label>
+                    <div class="relative">
+                        <input
+                            class="appearance-none rounded w-full py-2 px-3 text-white text-sm leading-tight"
+                            :class="{ 'border-red-500': !confirmPassword && checkEmpty }"
+                            :type="confirmPasswordType"
+                            v-model="confirmPassword"
+                            @input="validateConfirmPassword"
+                            minLength="6"
+                            maxLength="20"
+                            placeholder="Confirm Password"
+                            required
+                        />
+                        <div
+                            class="absolute right-2.5 bottom-1.5 cursor-pointer"
+                            @click.stop="showConfirmPassword = !showConfirmPassword"
+                        >
+                            <font-awesome-icon
+                                v-if="!showConfirmPassword"
+                                :icon="['fas', 'eye']"
+                            />
+                            <font-awesome-icon
+                                v-if="showConfirmPassword"
+                                :icon="['fas', 'eye-slash']"
+                            />
+                        </div>
+                    </div>
+                    <p
+                        v-if="confirmPasswordError"
+                        class="text-red-500 text-xs italic py-1"
                     >
-                        Register
-                    </button>
+                        {{ confirmPasswordErrorText }}
+                    </p>
+                </div>
+                <div class="flex justify-between">
                     <router-link
-                        class="inline-block align-baseline font-bold text-sm text-primary-600 hover:text-primary-300"
+                        class="max-w-40 flex items-center text-start font-bold text-sm text-primary-600 hover:text-primary-300"
                         to="/login"
                     >
                         Already have an account? Login
                     </router-link>
+                    <button
+                        class="bg-primary-500 hover:bg-primary-600 text-black font-bold py-2 px-5 rounded"
+                        type="submit"
+                        @click="register"
+                    >
+                        <span v-if="isLoading" class="spinner"></span>
+                        <span v-else >Register</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -64,20 +122,33 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { auth } from '../firebase.js';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 
 const email = ref('');
 const password = ref('');
+const confirmPassword = ref('');
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 const emailError = ref(false);
 const passwordError = ref(false);
+const confirmPasswordError = ref(false);
 const emailErrorText = ref('');
 const passwordErrorText = ref('');
-const registerErrorText = ref('');
+const confirmPasswordErrorText = ref('');
+const checkEmpty = ref(false);
 const router = useRouter();
 const user = ref(null);
+const isLoading = ref(false);
+
+const passwordType = computed(() => {
+    return showPassword.value ? 'text' : 'password';
+});
+const confirmPasswordType = computed(() => {
+    return showPassword.value ? 'text' : 'password';
+});
 
 // 驗證email
 const validateEmail = () => {
@@ -106,9 +177,31 @@ const validatePassword = () => {
         passwordErrorText.value = '';
     }
 }
+// 驗證確認密碼
+const validateConfirmPassword = () => {
+    if (!confirmPassword.value) {
+        confirmPasswordError.value = true;
+        confirmPasswordErrorText.value = 'Confirm password is required';
+    } else if (confirmPassword.value !== password.value) {
+        confirmPasswordError.value = true;
+        confirmPasswordErrorText.value = "Confirm password doesn't match";
+    } else {
+        confirmPasswordError.value = false;
+        confirmPasswordErrorText.value = '';
+    }
+}
 
 // 註冊+寄送驗證email
 const register = async () => {
+    isLoading.value = true;
+    checkEmpty.value = true;
+    validateEmail();
+    validatePassword();
+    validateConfirmPassword();
+    if (emailError.value || passwordError.value || confirmPasswordError.value) {
+        isLoading.value = false;
+        return;
+    }
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
         user.value = userCredential.user;
@@ -118,9 +211,23 @@ const register = async () => {
     } catch (error) {
         console.log('register failed', error.message);
         showNotification(`註冊失敗:${error.message}`);
+    } finally {
+        isLoading.value = false;
     }
 }
 </script>
 
 <style scoped>
+    .spinner {
+        @apply inline-block w-4 h-4 border-2 border-solid rounded-full;
+        border-color: currentColor;
+        border-top-color: transparent;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
 </style>
