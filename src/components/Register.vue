@@ -147,7 +147,7 @@ const passwordType = computed(() => {
     return showPassword.value ? 'text' : 'password';
 });
 const confirmPasswordType = computed(() => {
-    return showPassword.value ? 'text' : 'password';
+    return showConfirmPassword.value ? 'text' : 'password';
 });
 
 // 驗證email
