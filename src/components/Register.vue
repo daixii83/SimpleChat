@@ -9,7 +9,7 @@
                         Email
                     </label>
                     <input
-                        class="shadow appearance-none rounded w-full py-2 px-3 text-white leading-tight"
+                        class="rounded w-full py-2 px-3 text-black leading-tight"
                         :class="{ 'border-red-500': !email && checkEmpty }"
                         type="email"
                         v-model="email"
@@ -31,7 +31,7 @@
                     </label>
                     <div class="relative">
                         <input
-                            class="appearance-none rounded w-full py-2 px-3 text-white text-sm leading-tight"
+                            class="w-full py-2 px-3 text-black text-sm leading-tight"
                             :class="{ 'border-red-500': !password && checkEmpty }"
                             :type="passwordType"
                             v-model="password"
@@ -48,10 +48,12 @@
                             <font-awesome-icon
                                 v-if="!showPassword"
                                 :icon="['fas', 'eye']"
+                                class="text-surface-300"
                             />
                             <font-awesome-icon
                                 v-if="showPassword"
                                 :icon="['fas', 'eye-slash']"
+                                class="text-surface-300"
                             />
                         </div>
                     </div>
@@ -69,7 +71,7 @@
                     </label>
                     <div class="relative">
                         <input
-                            class="appearance-none rounded w-full py-2 px-3 text-white text-sm leading-tight"
+                            class="w-full py-2 px-3 text-black text-sm leading-tight"
                             :class="{ 'border-red-500': !confirmPassword && checkEmpty }"
                             :type="confirmPasswordType"
                             v-model="confirmPassword"
@@ -86,10 +88,12 @@
                             <font-awesome-icon
                                 v-if="!showConfirmPassword"
                                 :icon="['fas', 'eye']"
+                                class="text-surface-300"
                             />
                             <font-awesome-icon
                                 v-if="showConfirmPassword"
                                 :icon="['fas', 'eye-slash']"
+                                class="text-surface-300"
                             />
                         </div>
                     </div>

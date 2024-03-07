@@ -8,7 +8,7 @@
                         Email
                     </label>
                     <input
-                        class="shadow appearance-none rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
+                        class="shadow appearance-none rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                         type="email" v-model="email" placeholder="Email" required
                     />
                 </div>
@@ -17,7 +17,7 @@
                         Password
                     </label>
                     <input
-                        class="shadow appearance-none rounded w-full py-2 px-3 text-white mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                        class="shadow appearance-none rounded w-full py-2 px-3 text-black mb-3 leading-tight focus:outline-none focus:shadow-outline"
                         type="password" v-model="password" placeholder="Password" required
                     />
                     <router-link
