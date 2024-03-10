@@ -9,7 +9,7 @@
                         Email
                     </label>
                     <input
-                        class="rounded w-full py-2 px-3 text-black leading-tight"
+                        class="rounded w-full py-2 px-3 bg-surface-300 text-white leading-tight"
                         :class="{ 'border-red-500': !email && checkEmpty }"
                         type="email"
                         v-model="email"
@@ -31,7 +31,7 @@
                     </label>
                     <div class="relative">
                         <input
-                            class="w-full py-2 px-3 text-black text-sm leading-tight"
+                            class="rounded w-full py-2 px-3 bg-surface-300 text-white text-sm leading-tight"
                             :class="{ 'border-red-500': !password && checkEmpty }"
                             :type="passwordType"
                             v-model="password"
@@ -71,7 +71,7 @@
                     </label>
                     <div class="relative">
                         <input
-                            class="w-full py-2 px-3 text-black text-sm leading-tight"
+                            class="rounded w-full py-2 px-3 bg-surface-300 text-white text-sm leading-tight"
                             :class="{ 'border-red-500': !confirmPassword && checkEmpty }"
                             :type="confirmPasswordType"
                             v-model="confirmPassword"
@@ -88,12 +88,12 @@
                             <font-awesome-icon
                                 v-if="!showConfirmPassword"
                                 :icon="['fas', 'eye']"
-                                class="text-surface-300"
+                                class="text-white"
                             />
                             <font-awesome-icon
                                 v-if="showConfirmPassword"
                                 :icon="['fas', 'eye-slash']"
-                                class="text-surface-300"
+                                class="text-white"
                             />
                         </div>
                     </div>
