@@ -36,19 +36,21 @@ import { ref } from 'vue';
 import { auth } from '../firebase.js';
 import { confirmPasswordReset } from 'firebase/auth';
 import { useRoute, useRouter } from 'vue-router';
+import { useNotification } from '../stores/notification.js';
     const newPassword = ref('');
     const route = useRoute();
     const oobCode = route.query.oobCode;
     const router = useRouter();
+    const notification = useNotification();
 
     const resetPassword = async () => {
         try {
             await confirmPasswordReset(auth, oobCode, newPassword.value);
-            showNotification('設定新密碼成功!');
+            notification.showNotification('設定新密碼成功!');
             router.push('/login');
         } catch (error) {
             console.log('Password reset error:', error.message);
-            showNotification(`設定新密碼失敗:${error.message}`);
+            notification.showNotification(`設定新密碼失敗:${error.message}`);
         }
     }
 </script>

@@ -48,12 +48,12 @@
                             <font-awesome-icon
                                 v-if="!showPassword"
                                 :icon="['fas', 'eye']"
-                                class="text-surface-300"
+                                class="text-white"
                             />
                             <font-awesome-icon
                                 v-if="showPassword"
                                 :icon="['fas', 'eye-slash']"
-                                class="text-surface-300"
+                                class="text-white"
                             />
                         </div>
                     </div>

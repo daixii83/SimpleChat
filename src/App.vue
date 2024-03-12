@@ -4,16 +4,16 @@
       <router-view></router-view>
     </main>
     <footer class="bg-surface-100 py-4 shadow"></footer>
-    <FloatMessage ref="floatMessage" />
+    <FloatMessage
+      v-if="notification.isVisible"
+      :message="notification.message"
+    />
   </div>
 </template>
 
 <script setup>
-  import { ref } from 'vue';
+  import { useNotification } from './stores/notification';
   import FloatMessage from "./components/FloatMessage.vue";
-  // 引用訊息元件
-  const floatMessage = ref(null);
-  const showNotification = (message) => {
-    floatMessage.value.showMessage(message);
-  };
+  
+  const notification = useNotification();
 </script>
