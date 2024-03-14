@@ -2,7 +2,10 @@
     <div class="flex items-center justify-center min-h-full bg-surface-100">
         <div class="w-full max-w-xs">
             <h2 class="text-xl font-bold text-center text-white">Register</h2>
-            <form @submit.prevent="register" class="mt-8 bg-surface-200 rounded px-8 pt-6 pb-8 mb-4">
+            <form
+                @submit.prevent
+                class="mt-8 bg-surface-200 rounded px-8 pt-6 pb-8 mb-4"
+            >
                 <!-- email -->
                 <div class="mb-4">
                     <label class="block text-white text-start text-sm font-bold mb-2" for="email">
@@ -10,7 +13,7 @@
                     </label>
                     <input
                         class="rounded w-full py-2 px-3 bg-surface-300 text-white leading-tight"
-                        :class="{ 'border-red-500': !email && checkEmpty }"
+                        :class="{ 'border border-red-500': !email && checkEmpty }"
                         type="email"
                         v-model="email"
                         @input="validateEmail"
@@ -32,7 +35,7 @@
                     <div class="relative">
                         <input
                             class="rounded w-full py-2 px-3 bg-surface-300 text-white text-sm leading-tight"
-                            :class="{ 'border-red-500': !password && checkEmpty }"
+                            :class="{ 'border border-red-500': !password && checkEmpty }"
                             :type="passwordType"
                             v-model="password"
                             @input="validatePassword"
@@ -72,7 +75,7 @@
                     <div class="relative">
                         <input
                             class="rounded w-full py-2 px-3 bg-surface-300 text-white text-sm leading-tight"
-                            :class="{ 'border-red-500': !confirmPassword && checkEmpty }"
+                            :class="{ 'border border-red-500': !confirmPassword && checkEmpty }"
                             :type="confirmPasswordType"
                             v-model="confirmPassword"
                             @input="validateConfirmPassword"
@@ -114,7 +117,7 @@
                     <button
                         class="bg-primary-500 hover:bg-primary-600 text-black font-bold py-2 px-5 rounded"
                         type="submit"
-                        @click="register"
+                        @click.stop="register"
                     >
                         <span v-if="isLoading" class="spinner"></span>
                         <span v-else >Register</span>
@@ -130,6 +133,7 @@ import { ref, computed } from 'vue';
 import { auth } from '../firebase.js';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { useRouter } from 'vue-router';
+import { useNotification } from '../stores/notification.js';
 
 const email = ref('');
 const password = ref('');
@@ -146,6 +150,7 @@ const checkEmpty = ref(false);
 const router = useRouter();
 const user = ref(null);
 const isLoading = ref(false);
+const notification = useNotification();
 
 const passwordType = computed(() => {
     return showPassword.value ? 'text' : 'password';
@@ -207,14 +212,15 @@ const register = async () => {
         return;
     }
     try {
+        console.log(email.value, password.value);
         const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
         user.value = userCredential.user;
-        await sendEmailVerification(user);
+        await sendEmailVerification(user.value);
         console.log('register succeed', userCredential.user);
         router.push({ name: 'resendVerifyEmail', query: { email: user.value.email } });
     } catch (error) {
         console.log('register failed', error.message);
-        showNotification(`註冊失敗:${error.message}`);
+        notification.showNotification(`註冊失敗:${error.message}`);
     } finally {
         isLoading.value = false;
     }

@@ -1,23 +1,24 @@
 <template>
-    <div class="bg-surface-100 h-full flex flex-col justify-center items-center gap-2">
-        <h2 class="text-4xl font-bold text-white">
+    <div class="bg-surface-100 h-full flex flex-col justify-center items-center gap-8">
+        <h2 class="text-2xl font-bold text-white">
             註冊成功！ 已經發送email至: {{ email }}
         </h2>
-        <div class="">
-            <p class="text-2xl text-white">沒有收到驗證信嗎？</p>
+        <div class="flex flex-col gap-2">
+            <p class="text-xl text-white">沒有收到驗證信嗎？</p>
             <button
-                class="br-primary-500 hover:bg-primary-600 text-black font-bold py-2 px-4 rounded"
-                :disabled="isButtonDisabled"
+                class="bg-primary-500 hover:bg-primary-600 text-black font-bold py-2 px-4 rounded"
+                :disabled="isBtnDisabled"
                 @click.stop="resendVerificationEmail"
             >
-                重新發送
+                <p
+                    v-if="isBtnDisabled"
+                    class="text-black"
+                >
+                    請等待 {{ countdown }} 秒後可再次發送。
+                </p>
+                <p v-else>重新發送</p>
             </button>
-            <p
-                v-if="isButtonDisabled"
-                class="text-2xl text-white"
-            >
-                請等待 {{ countDown }} 秒後可再次發送。
-            </p>
+
         </div>
     </div>
 </template>
@@ -27,15 +28,18 @@
     import { useRoute } from 'vue-router'; 
     import { auth } from '../firebase.js';
     import { sendEmailVerification } from 'firebase/auth';
+    import { useNotification } from '../stores/notification.js';
     
     const route = useRoute();
     const email = route.query.email;
     const isBtnDisabled = ref(false);
     const countdown = ref(60);
+    const notification = useNotification();
 
     const resendVerificationEmail = async () => {
         try {
-            const user = await auth.getUserByEmail(email);
+            const user = auth.currentUser;
+            console.log(user);
             await sendEmailVerification(user);
             isBtnDisabled.value = true;
             countdown.value = 60;
@@ -46,10 +50,10 @@
                     isBtnDisabled.value = false;
                 }
             }, 1000);
-            showNotification(`已發送驗證信至:${email}`);
+            notification.showNotification(`已發送驗證信至:${email}`);
         } catch(error) {
             console.log('Error resending verification email:', error);
-            showNotification(`發送驗證信失敗:${error.message}`);
+            notification.showNotification(`發送驗證信失敗:${error.message}`);
         }
     }
 </script>

@@ -2,26 +2,54 @@
     <div class="flex items-center justify-center min-h-full bg-surface-100">
         <div class="w-full max-w-xs">
             <h2 class="text-2xl font-bold text-center text-white">Login</h2>
-            <form @submit.prevent="login" class="mt-8 bg-surface-200 rounded px-8 pt-6 pb-8 mb-4">
+            <form
+                @submit.prevent
+                class="mt-8 bg-surface-200 rounded px-8 pt-6 pb-8 mb-4"
+            >
                 <div class="mb-4">
                     <label class="block text-start text-white text-sm font-bold mb-2" for="email">
                         Email
                     </label>
                     <input
-                        class="shadow appearance-none rounded w-full py-2 px-3 bg-surface-300 text-white leading-tight focus:outline-none focus:shadow-outline"
-                        type="email" v-model="email" placeholder="Email" required
+                        class="rounded w-full py-2 px-3 bg-surface-300 text-white leading-tight"
+                        :class="{ 'border border-red-500': !email && checkEmpty }"
+                        type="email"
+                        v-model="email"
+                        placeholder="Email"
+                        required
                     />
                 </div>
                 <div class="flex flex-col mb-6">
                     <label class="block text-start text-white text-sm font-bold mb-2" for="password">
                         Password
                     </label>
-                    <input
-                        class="shadow appearance-none rounded w-full py-2 px-3 bg-surface-300 text-white mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                        type="password" v-model="password" placeholder="Password" required
-                    />
+                    <div class="relative">
+                        <input
+                            class="rounded w-full py-2 px-3 bg-surface-300 text-white leading-tight"
+                            :class="{ 'border border-red-500': !password && checkEmpty }"
+                            :type="passwordType"
+                            v-model="password"
+                            placeholder="Password"
+                            required
+                        />
+                        <div
+                            class="absolute right-2.5 bottom-1.5 cursor-pointer"
+                            @click.stop="showPassword = !showPassword"
+                        >
+                            <font-awesome-icon
+                                v-if="!showPassword"
+                                :icon="['fas', 'eye']"
+                                class="text-white"
+                            />
+                            <font-awesome-icon
+                                v-if="showPassword"
+                                :icon="['fas', 'eye-slash']"
+                                class="text-white"
+                            />
+                        </div>
+                    </div>
                     <router-link
-                        class="flex justify-start items-center font-bold text-sm text-surface-500 hover:text-surface-600 pl-2.5"
+                        class="flex justify-start items-center font-bold text-sm text-surface-500 hover:text-surface-600 p-2.5"
                         to="/forgetPassword"
                     >
                         Forget password?
@@ -37,8 +65,11 @@
                     </router-link>
                     <button
                         class="bg-primary-500 hover:bg-primary-600 text-black font-bold py-2 px-4 rounded"
-                        type="submit">
-                        Login
+                        type="submit"
+                        @click.stop="login"
+                    >
+                        <span v-if="isLoading" class="spinner"></span>
+                        <span v-else>Login</span>
                     </button>
                 </div>
             </form>
@@ -47,23 +78,52 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { auth } from '../firebase.js';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useNotification } from '../stores/notification.js';
+
 const email = ref('');
 const password = ref('');
+const showPassword = ref(false);
+const checkEmpty = ref(false);
+const isLoading = ref(false);
+const notification = useNotification();
+
+const passwordType = computed(() => {
+    return showPassword.value ? 'text' : 'password';
+});
 
 const login = async () => {
+    isLoading.value = true;
+    checkEmpty.value = true;
+    if(email.value.trim() === '' || password.value.trim() === '') {
+        this.isLoading = false;
+        return;
+    }
     try {
         await signInWithEmailAndPassword(auth, email.value, password.value);
-        console.log('user login succeed');
-        showNotification('登入成功');
+        notification.showNotification('登入成功');
     } catch (error) {
         console.log('user login failed', error.message);
-        showNotification('登入失敗');
+        notification.showNotification(`登入失敗：${error.message}`);
+    } finally {
+        isLoading.value = false;
     }
 }
 </script>
 
 <style scoped>
+    .spinner {
+        @apply inline-block w-4 h-4 border-2 border-solid rounded-full;
+        border-color: currentColor;
+        border-top-color: transparent;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
 </style>

@@ -1,34 +1,30 @@
 <template>
     <transition name="fade">
         <div
-            v-if="message"
-            class="fixed bottom-4 right-4 bg-primary-400 text-mixed-200 p-4 rounded-md"
+            v-if="notification.isVisible"
+            class="fixed bottom-4 right-4 bg-primary-400 text-black text-base font-normal p-2.5 rounded-md"
         >
-            {{ message }}
+            {{ notification.message }}
         </div>
     </transition>
 </template>
 
 <script setup>
-    import { ref } from 'vue';
-    const message = ref('');
+    import { useNotification } from '../stores/notification.js';
 
-    const showMessage = (newMessage) => {
-        message.value = newMessage;
-        setTimeout(() => {
-            message.value = '';
-        }, 3000);
-    };
+    const notification = useNotification();
 </script>
 
 <style scoped>
     .fade-enter-active,
     .fade-leave-active {
-        transition: opacity 0.5s;
+        transition: opacity 0.5s ease;
     }
-
     .fade-enter-from,
-    .fade-enter-to {
+    .fade-leave-to {
         opacity: 0;
+    }
+    .fade-enter-to, .fade-leave-from {
+        opacity: 1;
     }
 </style>
