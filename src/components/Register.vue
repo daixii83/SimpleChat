@@ -132,6 +132,7 @@
 import { ref, computed } from 'vue';
 import { auth } from '../firebase.js';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'vue-router';
 import { useNotification } from '../stores/notification.js';
 
@@ -212,11 +213,13 @@ const register = async () => {
         return;
     }
     try {
-        console.log(email.value, password.value);
         const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
         user.value = userCredential.user;
         await sendEmailVerification(user.value);
-        console.log('register succeed', userCredential.user);
+        await setDoc(doc(db, 'users', user.value.uid), {
+            email: user.value.email,
+        });
+
         router.push({ name: 'resendVerifyEmail', query: { email: user.value.email } });
     } catch (error) {
         console.log('register failed', error.message);
