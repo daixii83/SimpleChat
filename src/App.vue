@@ -3,7 +3,6 @@
     <main class="h-full flex-1">
       <router-view></router-view>
     </main>
-    <footer class="bg-surface-100 py-4 shadow"></footer>
     <FloatMessage/>
   </div>
 </template>

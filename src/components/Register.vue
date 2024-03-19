@@ -132,6 +132,7 @@
 import { ref, computed } from 'vue';
 import { auth } from '../firebase.js';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { db } from '../firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'vue-router';
 import { useNotification } from '../stores/notification.js';
@@ -215,12 +216,17 @@ const register = async () => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
         user.value = userCredential.user;
+        console.log(user.value);
         await sendEmailVerification(user.value);
+        // 將使用者資料存入firestore資料庫
         await setDoc(doc(db, 'users', user.value.uid), {
             email: user.value.email,
+            emailVerified: user.value.emailVerified,
+            displayName: user.value.displayName,
+            role: 'member',
         });
 
-        router.push({ name: 'resendVerifyEmail', query: { email: user.value.email } });
+        router.push({ name: 'ResendVerifyEmail', query: { email: user.value.email } });
     } catch (error) {
         console.log('register failed', error.message);
         notification.showNotification(`註冊失敗:${error.message}`);

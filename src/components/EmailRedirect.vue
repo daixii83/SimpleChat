@@ -19,10 +19,10 @@
         try {
             switch(mode) {
                 case 'verifyEmail':
-                    router.push({ name: 'verifyEmail', query: { oobCode: oobCode } });
+                    router.push({ name: 'VerifyEmail', query: { oobCode: oobCode } });
                     break;
                 case 'resetPassword':
-                    router.push({ name: 'resetPassword', query: { oobCode: oobCode } });
+                    router.push({ name: 'ResetPassword', query: { oobCode: oobCode } });
                     break;
             }
         } catch (error) {

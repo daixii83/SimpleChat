@@ -3,7 +3,7 @@
         <h2 class="text-2xl font-bold text-white">
             註冊成功！ 已經發送email至: {{ email }}
         </h2>
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-4">
             <p class="text-xl text-white">沒有收到驗證信嗎？</p>
             <button
                 class="bg-primary-500 hover:bg-primary-600 text-black font-bold py-2 px-4 rounded"
@@ -18,7 +18,14 @@
                 </p>
                 <p v-else>重新發送</p>
             </button>
-
+            <div class="flex justify-center">
+                <router-link
+                    class="max-w-40 flex items-center text-start font-bold text-base text-primary-600 hover:text-primary-300"
+                    to="/login"
+                >
+                    返回登入頁面
+                </router-link>
+            </div>
         </div>
     </div>
 </template>

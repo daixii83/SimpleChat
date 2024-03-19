@@ -82,6 +82,8 @@ import { ref, computed } from 'vue';
 import { auth } from '../firebase.js';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNotification } from '../stores/notification.js';
+import { useRouter } from 'vue-router';
+import { useAuth } from '../stores/auth.js';
 
 const email = ref('');
 const password = ref('');
@@ -89,6 +91,8 @@ const showPassword = ref(false);
 const checkEmpty = ref(false);
 const isLoading = ref(false);
 const notification = useNotification();
+const router = useRouter();
+const authStore = useAuth();
 
 const passwordType = computed(() => {
     return showPassword.value ? 'text' : 'password';
@@ -102,7 +106,9 @@ const login = async () => {
         return;
     }
     try {
-        await signInWithEmailAndPassword(auth, email.value, password.value);
+        const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
+        authStore.setUser(userCredential.user);
+        router.push('/dashboard');
         notification.showNotification('登入成功');
     } catch (error) {
         console.log('user login failed', error.message);
