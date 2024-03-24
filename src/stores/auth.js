@@ -23,10 +23,15 @@ export const useAuth = defineStore('auth', {
                 this.role = null;
             }
         },
-        signOut () {
-            auth.signOut();
-            this.user = null;
-            this.role = null;
+        async signOut () {
+            try {
+                await auth.signOut();
+                this.user = null;
+                this.role = null;
+            } catch (error) {
+                console.log('error:', error);
+            }
+
         }
     },
 });

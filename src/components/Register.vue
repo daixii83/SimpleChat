@@ -226,7 +226,7 @@ const register = async () => {
             role: 'member',
         });
 
-        router.push({ name: 'ResendVerifyEmail', query: { email: user.value.email } });
+        router.push({ name: 'ResendVerifyEmail', query: { email: user.value.email, page: 'register' } });
     } catch (error) {
         console.log('register failed', error.message);
         notification.showNotification(`註冊失敗:${error.message}`);

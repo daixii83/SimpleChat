@@ -13,16 +13,20 @@
 <script setup>
     import { onMounted } from 'vue'; 
     import { useRoute } from 'vue-router';
-    import { auth } from '../firebase.js';
+    import { auth, db } from '../firebase.js';
     import { applyActionCode } from 'firebase/auth';
+    import { doc, updateDoc } from 'firebase/firestore';
 
     const route = useRoute();
     onMounted(() => {
         const oobCode = route.query.oobCode;
-
         applyActionCode(auth, oobCode)
         .then(() => {
-
+            const user = auth.currentUser;
+            const userRef = doc(db, 'users', user.uid);
+            updateDoc(userRef, {
+                emailVerified: true
+            });
         })
         .catch((error) => {
             console.log('驗證email失敗:', error);

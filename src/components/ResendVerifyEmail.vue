@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-    import { ref } from 'vue';
+    import { ref, onMounted } from 'vue';
     import { useRoute } from 'vue-router'; 
     import { auth } from '../firebase.js';
     import { sendEmailVerification } from 'firebase/auth';
@@ -39,6 +39,7 @@
     
     const route = useRoute();
     const email = route.query.email;
+    const pageType = route.query.page ? route.query.page : null;
     const isBtnDisabled = ref(false);
     const countdown = ref(60);
     const notification = useNotification();
@@ -63,4 +64,19 @@
             notification.showNotification(`發送驗證信失敗:${error.message}`);
         }
     }
+
+    onMounted(() => {
+        console.log(pageType);
+        // firebase限制60秒發一次驗證信，註冊跳轉後要先開始計時
+        if(pageType == 'register') {
+            isBtnDisabled.value = true;
+            const timer = setInterval(() => {
+                countdown.value--;
+                if(countdown.value === 0) {
+                    clearInterval(timer);
+                    isBtnDisabled.value = false;
+                }
+            }, 1000);
+        }
+    });
 </script>
