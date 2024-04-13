@@ -218,6 +218,8 @@ const register = async () => {
         user.value = userCredential.user;
         console.log(user.value);
         await sendEmailVerification(user.value);
+        user.value.displayName = generateRandomUserName();
+        console.log(user.value.displayName);
         // 將使用者資料存入firestore資料庫
         await setDoc(doc(db, 'users', user.value.uid), {
             email: user.value.email,
@@ -233,6 +235,15 @@ const register = async () => {
     } finally {
         isLoading.value = false;
     }
+}
+
+function generateRandomUserName (length = 10) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for(let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return `user${result}`;
 }
 </script>
 
